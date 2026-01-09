@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Teste de API - DuoPro Services</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .status.pending {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .status.success {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .status.error {
+            background: #f44336;
+            color: white;
+        }
+        
+        .status.loading {
+            background: #2196f3;
+            color: white;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .result.success {
+            border-color: #4caf50;
+            background: #f1f8f4;
+        }
+        
+        .result.error {
+            border-color: #f44336;
+            background: #fef1f0;
+        }
+        
+        .url {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 13px;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .info-box h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .info-box p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .steps {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .steps h3 {
+            color: #f57c00;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .steps ol {
+            margin-left: 20px;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        .icon {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste de API - DuoPro Services</h1>
+        <p class="subtitle">Verifique se o backend está funcionando corretamente</p>
+        
+        <!-- Health Check Test -->
+        <div class="test-section">
+            <h2><span class="icon">🏥</span> Health Check</h2>
+            <div class="status pending" id="health-status">⏳ Aguardando teste...</div>
+            <div class="url">https://lqpmyvizjfwzddxspacv.supabase.co/functions/v1/make-server-c2a25be0/health</div>
+            <button onclick="testHealth()" id="health-btn">▶️ Testar Health Check</button>
+            <div id="health-result"></div>
+        </div>
+        
+        <!-- Messages API Test -->
+        <div class="test-section">
+            <h2><span class="icon">💬</span> Messages API</h2>
+            <div class="status pending" id="messages-status">⏳ Aguardando teste...</div>
+            <div class="url">https://lqpmyvizjfwzddxspacv.supabase.co/functions/v1/make-server-c2a25be0/api/messages</div>
+            <button onclick="testMessages()" id="messages-btn">▶️ Testar Messages API</button>
+            <div id="messages-result"></div>
+        </div>
+        
+        <!-- Info Box -->
+        <div class="info-box">
+            <h3>ℹ️ O que este teste faz?</h3>
+            <p>
+                Este teste verifica se a Edge Function "server" está deployada e funcionando no Supabase.
+                Se todos os testes passarem ✅, seu backend está OK! Se falharem ❌, você precisa fazer o deploy.
+            </p>
+        </div>
+        
+        <!-- Steps if failed -->
+        <div class="steps" id="deploy-steps" style="display: none;">
+            <h3>🚀 Como fazer o deploy:</h3>
+            <ol>
+                <li>Instale o Supabase CLI: <code>npm install -g supabase</code></li>
+                <li>Faça login: <code>supabase login</code></li>
+                <li>Link o projeto: <code>supabase link --project-ref lqpmyvizjfwzddxspacv</code></li>
+                <li>Deploy: <code>supabase functions deploy server --project-ref lqpmyvizjfwzddxspacv --no-verify-jwt</code></li>
+            </ol>
+            <p style="margin-top: 10px;">
+                <strong>Ou use o GitHub Actions:</strong> Siga o guia em <code>INICIO_RAPIDO.md</code>
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        const PROJECT_ID = 'lqpmyvizjfwzddxspacv';
+        const BASE_URL = `https://${PROJECT_ID}.supabase.co/functions/v1/make-server-c2a25be0`;
+        
+        async function testHealth() {
+            const statusEl = document.getElementById('health-status');
+            const resultEl = document.getElementById('health-result');
+            const btn = document.getElementById('health-btn');
+            
+            statusEl.className = 'status loading';
+            statusEl.textContent = '🔄 Testando...';
+            btn.disabled = true;
+            resultEl.innerHTML = '';
+            
+            try {
+                const response = await fetch(`${BASE_URL}/health`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.status === 'ok') {
+                    statusEl.className = 'status success';
+                    statusEl.textContent = '✅ Backend funcionando!';
+                    resultEl.innerHTML = `<div class="result success">${JSON.stringify(data, null, 2)}</div>`;
+                } else {
+                    throw new Error(`Status: ${response.status}`);
+                }
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = '❌ Backend não está rodando';
+                resultEl.innerHTML = `<div class="result error">Erro: ${error.message}\n\n⚠️ A Edge Function não foi deployada ainda!</div>`;
+                document.getElementById('deploy-steps').style.display = 'block';
+            } finally {
+                btn.disabled = false;
+            }
+        }
+        
+        async function testMessages() {
+            const statusEl = document.getElementById('messages-status');
+            const resultEl = document.getElementById('messages-result');
+            const btn = document.getElementById('messages-btn');
+            
+            statusEl.className = 'status loading';
+            statusEl.textContent = '🔄 Testando...';
+            btn.disabled = true;
+            resultEl.innerHTML = '';
+            
+            try {
+                // Primeiro tentar sem autenticação (deve retornar 401)
+                const response = await fetch(`${BASE_URL}/api/messages`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.status === 401) {
+                    // Esperado! API está funcionando mas requer autenticação
+                    statusEl.className = 'status success';
+                    statusEl.textContent = '✅ API funcionando (requer auth)';
+                    resultEl.innerHTML = `<div class="result success">✅ API está respondendo corretamente!\n\nStatus: 401 (Unauthorized)\n\nIsso é ESPERADO! A API requer autenticação.\nNo app, com login, funcionará perfeitamente.</div>`;
+                } else if (response.ok) {
+                    // Retornou dados (não deveria sem auth, mas ok)
+                    const data = await response.json();
+                    statusEl.className = 'status success';
+                    statusEl.textContent = '✅ API funcionando!';
+                    resultEl.innerHTML = `<div class="result success">${JSON.stringify(data, null, 2)}</div>`;
+                } else {
+                    throw new Error(`Status: ${response.status}`);
+                }
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = '❌ API não está respondendo';
+                resultEl.innerHTML = `<div class="result error">Erro: ${error.message}\n\n⚠️ A Edge Function não foi deployada ainda!</div>`;
+                document.getElementById('deploy-steps').style.display = 'block';
+            } finally {
+                btn.disabled = false;
+            }
+        }
+        
+        // Auto-run health check on load
+        window.addEventListener('load', () => {
+            setTimeout(testHealth, 500);
+        });
+    </script>
+</body>
+</html>

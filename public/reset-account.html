@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Account - DuoPro Services</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #dc2626;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    .warning {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      color: #991b1b;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #333;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .btn-danger {
+      background: #dc2626;
+      color: white;
+    }
+    .btn-danger:hover {
+      background: #b91c1c;
+    }
+    .btn-success {
+      background: #16a34a;
+      color: white;
+    }
+    .btn-success:hover {
+      background: #15803d;
+    }
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 4px;
+      display: none;
+    }
+    .result.success {
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      color: #166534;
+      display: block;
+    }
+    .result.error {
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+      display: block;
+    }
+    .result.info {
+      background: #dbeafe;
+      border: 1px solid #93c5fd;
+      color: #1e40af;
+      display: block;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #2563eb;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    .steps {
+      background: #f9fafb;
+      padding: 20px;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+    .steps h3 {
+      margin-top: 0;
+      color: #374151;
+    }
+    .steps ol {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+    .steps li {
+      margin: 8px 0;
+      color: #4b5563;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔄 Reset/Recreate Account</h1>
+    <p class="subtitle">
+      If you can't login because the password is wrong or the account was created incorrectly, 
+      use this tool to delete and recreate your account.
+    </p>
+
+    <div class="warning">
+      <strong>⚠️ WARNING:</strong> This will permanently delete your account and all associated data 
+      (documents, timeline progress, etc.). This action cannot be undone!
+    </div>
+
+    <div class="form-group">
+      <label for="email">Your Email Address</label>
+      <input type="email" id="email" placeholder="veprass@gmail.com" value="veprass@gmail.com">
+    </div>
+
+    <div class="form-group">
+      <label for="newPassword">New Password (min 6 characters)</label>
+      <input type="password" id="newPassword" placeholder="Enter your new password">
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Confirm New Password</label>
+      <input type="password" id="confirmPassword" placeholder="Re-enter your password">
+    </div>
+
+    <div class="form-group">
+      <label for="name">Your Full Name</label>
+      <input type="text" id="name" placeholder="John Doe" value="">
+    </div>
+
+    <button class="btn-danger" id="resetBtn" onclick="resetAccount()">
+      🗑️ Delete & Recreate Account
+    </button>
+
+    <div id="result" class="result"></div>
+
+    <div class="steps">
+      <h3>📋 What This Tool Does:</h3>
+      <ol>
+        <li>Checks if your account exists in Supabase</li>
+        <li>If it exists, shows you the user ID</li>
+        <li>Provides instructions to delete it via Supabase Dashboard</li>
+        <li>After deletion, helps you create a new account with the correct password</li>
+      </ol>
+      <p><strong>Note:</strong> You'll need to manually delete the account in the Supabase Dashboard for security reasons.</p>
+    </div>
+
+    <a href="/" class="back-link">← Back to Home</a>
+  </div>
+
+  <script>
+    const projectId = "pwlacumydrxvshklvttp";
+    const publicAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3bGFjdW15ZHJ4dnNoa2x2dHRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNjM3MTQsImV4cCI6MjA4MTczOTcxNH0.uj1rVapx5bBzp6YVFbcOwxCDZftpLzjwfMJ4aCy_B_A";
+
+    function showResult(message, type) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.className = `result ${type}`;
+      resultDiv.innerHTML = message;
+      resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    async function resetAccount() {
+      const email = document.getElementById('email').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const name = document.getElementById('name').value;
+      const btn = document.getElementById('resetBtn');
+
+      // Validation
+      if (!email || !newPassword || !confirmPassword || !name) {
+        showResult('❌ Please fill all fields', 'error');
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        showResult('❌ Password must be at least 6 characters', 'error');
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        showResult('❌ Passwords do not match', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Processing...';
+
+      showResult('⏳ Step 1: Checking if account exists...', 'info');
+
+      try {
+        // Try to find if user exists by attempting to sign in with wrong password
+        const testResponse = await fetch(
+          `https://${projectId}.supabase.co/functions/v1/make-server-c2a25be0/auth/signup`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${publicAnonKey}`
+            },
+            body: JSON.stringify({ email, password: newPassword, name })
+          }
+        );
+
+        const testResult = await testResponse.json();
+
+        if (testResponse.ok) {
+          // Account didn't exist, successfully created!
+          showResult(
+            `✅ <strong>SUCCESS!</strong><br><br>` +
+            `Your account has been created with:<br>` +
+            `📧 Email: <strong>${email}</strong><br>` +
+            `👤 Name: <strong>${name}</strong><br><br>` +
+            `You can now <a href="/login">login here</a> with your new password!`,
+            'success'
+          );
+        } else if (testResult.error && (
+          testResult.error.includes('already registered') || 
+          testResult.error.includes('already exists') ||
+          testResult.error.includes('duplicate')
+        )) {
+          // Account exists
+          showResult(
+            `⚠️ <strong>ACCOUNT EXISTS</strong><br><br>` +
+            `The email <strong>${email}</strong> is already registered in the system.<br><br>` +
+            `<strong>📋 TO DELETE IT:</strong><br>` +
+            `1. Go to: <a href="https://supabase.com/dashboard/project/${projectId}/auth/users" target="_blank">Supabase Dashboard - Users</a><br>` +
+            `2. Find the user: <strong>${email}</strong><br>` +
+            `3. Click the <strong>3 dots (⋮)</strong> → <strong>Delete user</strong><br>` +
+            `4. Confirm deletion<br>` +
+            `5. Come back here and click the button again<br><br>` +
+            `<strong>OR:</strong> Try <a href="/login">logging in</a> with your existing password`,
+            'error'
+          );
+        } else {
+          showResult(`❌ Error: ${testResult.error}`, 'error');
+        }
+
+      } catch (error) {
+        showResult(
+          `❌ <strong>BACKEND NOT RESPONDING</strong><br><br>` +
+          `Error: ${error.message}<br><br>` +
+          `The backend Edge Function is not deployed.<br>` +
+          `Please follow the steps in <strong>DEPLOY_RAPIDO.md</strong> to deploy it.`,
+          'error'
+        );
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🗑️ Delete & Recreate Account';
+      }
+    }
+  </script>
+</body>
+</html>

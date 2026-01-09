@@ -1,0 +1,47 @@
+# robots.txt para DuoPro Services - Canadian Tax Specialist
+# Updated: December 23, 2024
+
+# Permitir todos os bots rastrearem páginas públicas
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /signup
+
+# Bloquear áreas privadas e sensíveis
+Disallow: /dashboard
+Disallow: /onboarding
+Disallow: /admin
+Disallow: /tax-filing/
+Disallow: /forgot-password
+Disallow: /api/
+Disallow: /_redirects
+Disallow: /test-
+
+# Arquivos específicos a bloquear
+Disallow: *.json$
+Disallow: /test-*.html
+
+# Sitemap principal
+Sitemap: https://duoproservices.netlify.app/sitemap.xml
+
+# Configurações para Google Bot
+User-agent: Googlebot
+Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /api/
+
+# Google Image Bot
+User-agent: Googlebot-Image
+Allow: /
+Disallow: /dashboard
+Disallow: /admin
+
+# Bing Bot
+User-agent: Bingbot
+Allow: /
+Disallow: /dashboard
+Disallow: /admin
+
+# Crawl-delay para respeitar o servidor
+Crawl-delay: 1
