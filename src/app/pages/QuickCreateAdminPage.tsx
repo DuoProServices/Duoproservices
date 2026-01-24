@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { projectId, publicAnonKey } from '../../../utils/supabase/info';
+import { projectId, publicAnonKey } from '@/config/supabase';
 import { UserPlus, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function QuickCreateAdminPage() {
