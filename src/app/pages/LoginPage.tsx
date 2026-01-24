@@ -49,15 +49,13 @@ export default function LoginPage() {
           ? '❌ Invalid email or password.'
           : '❌ Email ou mot de passe invalide.';
         setShowSetupHint(true); // Show setup hint
-      } else if (errorMessage.includes('Email not confirmed')) {
-        errorMessage = language === 'en'
-          ? '❌ Please confirm your email before logging in.'
-          : '❌ Veuillez confirmer votre email avant de vous connecter.';
       } else if (errorMessage.includes('Failed to fetch')) {
         errorMessage = language === 'en'
           ? '❌ Cannot connect to server. Please check your internet connection.'
           : '❌ Impossible de se connecter au serveur. Veuillez vérifier votre connexion Internet.';
       }
+      
+      // ✅ REMOVED: Email confirmation check - all emails are auto-confirmed
       
       setError(errorMessage);
       toast.error(errorMessage);
