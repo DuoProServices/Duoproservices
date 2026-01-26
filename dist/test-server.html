@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Edge Function - DuoPro Services</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #2563eb;
+        }
+        .test-name {
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        .test-url {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #6b7280;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+        .result {
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .success {
+            background: #d1fae5;
+            border: 1px solid #10b981;
+            color: #065f46;
+        }
+        .error {
+            background: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+        .pending {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .status-online {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-offline {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Edge Function Status Checker</h1>
+        <p class="subtitle">Testing Supabase Edge Function: make-server-c2a25be0</p>
+
+        <div id="tests">
+            <!-- Tests will be inserted here -->
+        </div>
+
+        <div class="actions">
+            <button onclick="runAllTests()">🔄 Run All Tests</button>
+            <button onclick="location.reload()">🔃 Reload Page</button>
+            <button onclick="window.open('https://supabase.com/dashboard/project/pwlacumydrxvshklvttp/functions', '_blank')">
+                🚀 Open Supabase Functions Dashboard
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const PROJECT_ID = 'pwlacumydrxvshklvttp';
+        const BASE_URL = `https://${PROJECT_ID}.supabase.co/functions/v1/make-server-c2a25be0`;
+        
+        const tests = [
+            {
+                name: 'Health Check',
+                url: `${BASE_URL}/health`,
+                method: 'GET',
+                expectedStatus: 200,
+                description: 'Basic health check endpoint'
+            },
+            {
+                name: 'Admin Hub - Ping',
+                url: `${BASE_URL}/admin-hub/ping`,
+                method: 'GET',
+                expectedStatus: 200,
+                description: 'Admin Hub test endpoint (no auth required)'
+            },
+            {
+                name: 'Admin Hub - Health',
+                url: `${BASE_URL}/admin-hub/health`,
+                method: 'GET',
+                expectedStatus: 200,
+                description: 'Admin Hub health check'
+            },
+            {
+                name: 'Admin Hub - Get Tasks',
+                url: `${BASE_URL}/admin-hub/tasks`,
+                method: 'GET',
+                expectedStatus: 200,
+                description: 'Get all tasks (no auth required)'
+            },
+            {
+                name: 'Admin Hub - Get Activities',
+                url: `${BASE_URL}/admin-hub/activities`,
+                method: 'GET',
+                expectedStatus: 200,
+                description: 'Get all team activities (no auth required)'
+            }
+        ];
+
+        function createTestElement(test, index) {
+            return `
+                <div class="test-section" id="test-${index}">
+                    <div class="test-name">
+                        ${index + 1}. ${test.name}
+                        <span class="status-badge status-offline" id="badge-${index}">PENDING</span>
+                    </div>
+                    <div class="test-url">${test.url}</div>
+                    <div style="color: #6b7280; font-size: 13px; margin-bottom: 10px;">${test.description}</div>
+                    <div class="result pending" id="result-${index}">⏳ Waiting to run...</div>
+                </div>
+            `;
+        }
+
+        function renderTests() {
+            const testsContainer = document.getElementById('tests');
+            testsContainer.innerHTML = tests.map((test, index) => createTestElement(test, index)).join('');
+        }
+
+        async function runTest(test, index) {
+            const resultEl = document.getElementById(`result-${index}`);
+            const badgeEl = document.getElementById(`badge-${index}`);
+            
+            resultEl.className = 'result pending';
+            resultEl.textContent = '⏳ Running test...';
+            badgeEl.className = 'status-badge status-offline';
+            badgeEl.textContent = 'TESTING';
+
+            try {
+                const startTime = Date.now();
+                const response = await fetch(test.url, {
+                    method: test.method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const duration = Date.now() - startTime;
+
+                let responseText;
+                try {
+                    const data = await response.json();
+                    responseText = JSON.stringify(data, null, 2);
+                } catch {
+                    responseText = await response.text();
+                }
+
+                if (response.ok) {
+                    resultEl.className = 'result success';
+                    resultEl.textContent = `✅ SUCCESS (${duration}ms)\n\nStatus: ${response.status}\n\nResponse:\n${responseText}`;
+                    badgeEl.className = 'status-badge status-online';
+                    badgeEl.textContent = 'ONLINE';
+                } else {
+                    resultEl.className = 'result error';
+                    resultEl.textContent = `❌ FAILED (${duration}ms)\n\nStatus: ${response.status}\n\nResponse:\n${responseText}`;
+                    badgeEl.className = 'status-badge status-offline';
+                    badgeEl.textContent = 'ERROR';
+                }
+            } catch (error) {
+                resultEl.className = 'result error';
+                resultEl.textContent = `❌ NETWORK ERROR\n\nError: ${error.message}\n\n⚠️ This usually means:\n1. The Edge Function is NOT deployed\n2. The Supabase project is paused\n3. There's a network/CORS issue\n\n🔧 Solution: Deploy the function via Supabase Dashboard`;
+                badgeEl.className = 'status-badge status-offline';
+                badgeEl.textContent = 'OFFLINE';
+            }
+        }
+
+        async function runAllTests() {
+            console.log('🚀 Running all tests...');
+            
+            for (let i = 0; i < tests.length; i++) {
+                await runTest(tests[i], i);
+                // Small delay between tests
+                if (i < tests.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            }
+            
+            console.log('✅ All tests completed');
+        }
+
+        // Initialize
+        renderTests();
+        
+        // Auto-run tests on page load
+        setTimeout(() => {
+            runAllTests();
+        }, 500);
+    </script>
+</body>
+</html>
