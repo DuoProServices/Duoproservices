@@ -10,6 +10,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       '@utils': path.resolve(__dirname, './utils'),
     },
+    dedupe: ['react', 'react-dom']
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
@@ -21,11 +22,7 @@ export default defineConfig({
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router'],
-          supabase: ['@supabase/supabase-js'],
-          ui: ['lucide-react', 'sonner']
-        }
+        manualChunks: undefined
       }
     }
   }
