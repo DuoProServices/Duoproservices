@@ -10,10 +10,10 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       '@utils': path.resolve(__dirname, './utils'),
     },
+    dedupe: ['react', 'react-dom'],
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
-    dedupe: ['react', 'react-dom'],
   },
   base: '/',
   build: {
