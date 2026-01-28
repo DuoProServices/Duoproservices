@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Offline Mode - DuoPro Services</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+        .emoji {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .warning-box h2 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .warning-box ul {
+            list-style: none;
+            padding: 0;
+            color: #856404;
+            line-height: 2;
+        }
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .button {
+            border: none;
+            border-radius: 12px;
+            padding: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            color: white;
+            text-align: center;
+        }
+        .button:hover {
+            transform: translateY(-4px);
+        }
+        .button-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .button-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .button-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .button-emoji {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .button-desc {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+        .results {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        .results h3 {
+            color: #4ade80;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        .log {
+            background: #0a0a0a;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .log-line {
+            margin-bottom: 5px;
+        }
+        .log-success { color: #4ade80; }
+        .log-error { color: #f87171; }
+        .log-warning { color: #fbbf24; }
+        .log-info { color: #60a5fa; }
+        .log-default { color: #e5e7eb; }
+        .instructions {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+        .instructions h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .instructions ol {
+            line-height: 2;
+            color: #555;
+            padding-left: 25px;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .back-link a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+        .back-link a:hover {
+            opacity: 1;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="card">
+            <div class="emoji">🔧</div>
+            <h1>Fix "Working in Offline Mode"</h1>
+            <p class="subtitle">Resolver problema de dados da Verônica e novos usuários não salvando</p>
+        </div>
+
+        <!-- Problem Description -->
+        <div class="warning-box">
+            <h2>⚠️ Problema Atual:</h2>
+            <ul>
+                <li>❌ Sistema está em "Working in offline mode"</li>
+                <li>❌ Novos usuários não são salvos no Supabase</li>
+                <li>❌ Aparece sempre os dados da Verônica</li>
+                <li>❌ Dados ficam só no cache do navegador</li>
+            </ul>
+        </div>
+
+        <!-- Actions -->
+        <div class="card">
+            <h2 style="font-size: 1.8rem; font-weight: bold; margin-bottom: 30px; text-align: center;">
+                🎯 Escolha uma ação:
+            </h2>
+            <div class="button-grid">
+                <button class="button button-primary" onclick="testConnection()">
+                    <div class="button-emoji">🔍</div>
+                    <div>Testar Conexão</div>
+                    <div class="button-desc">Verificar se backend está online</div>
+                </button>
+                <button class="button button-danger" onclick="clearCache()">
+                    <div class="button-emoji">🧹</div>
+                    <div>Limpar Cache</div>
+                    <div class="button-desc">Remove dados antigos da Verônica</div>
+                </button>
+                <button class="button button-info" onclick="location.reload()">
+                    <div class="button-emoji">🔄</div>
+                    <div>Recarregar Página</div>
+                    <div class="button-desc">Depois de limpar o cache</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div id="results" class="results hidden">
+            <h3>📊 Resultados:</h3>
+            <div class="log" id="log"></div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>📖 Passo a Passo:</h3>
+            <ol>
+                <li><strong>Primeiro:</strong> Clique em "Testar Conexão" para ver se o backend está online</li>
+                <li><strong>Se backend estiver OFFLINE:</strong> Você precisa fazer deploy da Edge Function no Supabase Dashboard</li>
+                <li><strong>Se backend estiver OK:</strong> Clique em "Limpar Cache" para remover dados antigos</li>
+                <li><strong>Depois:</strong> Clique em "Recarregar Página" ou pressione F5</li>
+                <li><strong>Pronto:</strong> O sistema deve sair do modo offline e funcionar normalmente!</li>
+            </ol>
+        </div>
+
+        <!-- Back Link -->
+        <div class="back-link">
+            <a href="/">← Voltar para home</a>
+        </div>
+    </div>
+
+    <script>
+        const projectId = "pwlacumydrxvshklvttp";
+        const publicAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3bGFjdW15ZHJ4dnNoa2x2dHRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNjM3MTQsImV4cCI6MjA4MTczOTcxNH0.uj1rVapx5bBzp6YVFbcOwxCDZftpLzjwfMJ4aCy_B_A";
+
+        function showResults() {
+            document.getElementById('results').classList.remove('hidden');
+        }
+
+        function addLog(message, type = 'default') {
+            const log = document.getElementById('log');
+            const line = document.createElement('div');
+            line.className = `log-line log-${type}`;
+            line.textContent = message;
+            log.appendChild(line);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        async function testConnection() {
+            clearLog();
+            showResults();
+            
+            addLog('🔍 Testando conexão com Supabase...', 'info');
+            addLog('', 'default');
+            
+            // Test Edge Function
+            addLog('1️⃣ Testando Edge Function (Backend)...', 'info');
+            
+            try {
+                const response = await fetch(
+                    `https://${projectId}.supabase.co/functions/v1/make-server-c2a25be0/health`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${publicAnonKey}`
+                        }
+                    }
+                );
+
+                if (response.ok) {
+                    addLog('✅ Backend ONLINE! Edge Function está funcionando!', 'success');
+                    addLog('', 'default');
+                    addLog('🎉 Tudo está OK! Agora limpe o cache e recarregue.', 'success');
+                } else {
+                    addLog(`❌ Backend OFFLINE! (Status: ${response.status})`, 'error');
+                    addLog('', 'default');
+                    addLog('⚠️ PROBLEMA ENCONTRADO:', 'warning');
+                    addLog('O Edge Function não foi deployed ou foi deletado.', 'warning');
+                    addLog('', 'default');
+                    addLog('✅ SOLUÇÃO:', 'info');
+                    addLog('1. Vá para: https://supabase.com/dashboard', 'info');
+                    addLog('2. Selecione seu projeto: ' + projectId, 'info');
+                    addLog('3. Menu lateral → Edge Functions', 'info');
+                    addLog('4. Procure: make-server-c2a25be0', 'info');
+                    addLog('5. Se não existe → Precisa fazer deploy', 'info');
+                    addLog('6. Se existe mas não está deployed → Clique em Deploy', 'info');
+                }
+            } catch (err) {
+                addLog(`❌ ERRO: ${err.message}`, 'error');
+                addLog('', 'default');
+                addLog('⚠️ Não conseguiu conectar ao backend.', 'error');
+                addLog('O Edge Function NÃO foi deployed!', 'error');
+                addLog('', 'default');
+                addLog('🔧 CAUSA:', 'warning');
+                addLog('• Edge Function não existe no Supabase', 'warning');
+                addLog('• CORS está bloqueando', 'warning');
+                addLog('• Função foi deletada', 'warning');
+            }
+            
+            addLog('', 'default');
+            addLog('2️⃣ Verificando configuração...', 'info');
+            addLog(`• Project ID: ${projectId}`, 'default');
+            addLog(`• URL: https://${projectId}.supabase.co`, 'default');
+        }
+
+        function clearCache() {
+            clearLog();
+            showResults();
+            
+            addLog('🧹 Limpando localStorage...', 'warning');
+            
+            const localKeys = Object.keys(localStorage);
+            localStorage.clear();
+            addLog(`✅ ${localKeys.length} items removidos do localStorage`, 'success');
+            
+            const sessionKeys = Object.keys(sessionStorage);
+            sessionStorage.clear();
+            addLog(`✅ ${sessionKeys.length} items removidos do sessionStorage`, 'success');
+            
+            addLog('', 'default');
+            addLog('✅ CACHE LIMPO!', 'success');
+            addLog('', 'default');
+            addLog('⚠️ IMPORTANTE: Recarregue a página agora (F5 ou Ctrl+R)', 'warning');
+            addLog('', 'default');
+            addLog('Você também pode clicar no botão "Recarregar Página" acima', 'info');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub Upload Helper - DuoProServices</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    h1 {
+      color: #667eea;
+      font-size: 32px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 40px;
+      font-size: 16px;
+    }
+    
+    .step {
+      background: #f8f9fa;
+      border-left: 4px solid #667eea;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    }
+    
+    .step h2 {
+      color: #667eea;
+      font-size: 20px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .step-number {
+      background: #667eea;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .code-block {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      overflow-x: auto;
+      margin: 15px 0;
+      position: relative;
+    }
+    
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .copy-btn:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+    }
+    
+    .copy-btn.copied {
+      background: #10b981;
+    }
+    
+    .download-btn {
+      display: block;
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 18px 32px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 30px 0;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .download-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    
+    .warning {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 15px 0;
+      color: #856404;
+    }
+    
+    .success {
+      background: #d1fae5;
+      border-left: 4px solid #10b981;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 15px 0;
+      color: #065f46;
+    }
+    
+    .file-list {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 15px 0;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .file-item {
+      padding: 8px;
+      border-bottom: 1px solid #f3f4f6;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: #4b5563;
+    }
+    
+    .file-item:last-child {
+      border-bottom: none;
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .tab {
+      padding: 12px 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      color: #6b7280;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 GitHub Upload Helper</h1>
+    <p class="subtitle">Sincronize todo o projeto DuoProServices com o GitHub em 3 passos</p>
+    
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('windows')">💻 Windows</button>
+      <button class="tab" onclick="switchTab('mac')">🍎 Mac/Linux</button>
+      <button class="tab" onclick="switchTab('manual')">✋ Manual</button>
+    </div>
+    
+    <!-- WINDOWS TAB -->
+    <div id="windows-tab" class="tab-content active">
+      <div class="step">
+        <h2><span class="step-number">1</span> Baixe o Script de Sincronização</h2>
+        <p>Clique no botão abaixo para baixar o script que irá copiar todos os arquivos para o GitHub:</p>
+        <button class="download-btn" onclick="downloadWindowsScript()">
+          📥 Baixar sync-github.bat (Windows)
+        </button>
+        <div class="success">
+          ✅ O script irá criar <strong>todos os arquivos e pastas</strong> automaticamente!
+        </div>
+      </div>
+      
+      <div class="step">
+        <h2><span class="step-number">2</span> Prepare o Repositório GitHub</h2>
+        <p>Abra o <strong>Git Bash</strong> ou <strong>Command Prompt</strong> e execute:</p>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this, 'win-setup')">Copiar</button>
+          <pre id="win-setup">git clone https://github.com/SEU-USUARIO/SEU-REPOSITORIO.git
+cd SEU-REPOSITORIO</pre>
+        </div>
+        <div class="warning">
+          ⚠️ <strong>Substitua</strong> SEU-USUARIO e SEU-REPOSITORIO pelos valores corretos!
+        </div>
+      </div>
+      
+      <div class="step">
+        <h2><span class="step-number">3</span> Execute o Script</h2>
+        <p>Copie o arquivo <strong>sync-github.bat</strong> para dentro da pasta do repositório e execute:</p>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this, 'win-run')">Copiar</button>
+          <pre id="win-run">sync-github.bat</pre>
+        </div>
+        <p style="margin-top: 15px;">O script irá:</p>
+        <ul style="margin-left: 30px; margin-top: 10px; line-height: 1.8;">
+          <li>✅ Criar todas as pastas necessárias</li>
+          <li>✅ Copiar todos os arquivos importantes</li>
+          <li>✅ Fazer commit automático</li>
+          <li>✅ Fazer push para o GitHub</li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- MAC/LINUX TAB -->
+    <div id="mac-tab" class="tab-content">
+      <div class="step">
+        <h2><span class="step-number">1</span> Baixe o Script de Sincronização</h2>
+        <p>Clique no botão abaixo para baixar o script shell:</p>
+        <button class="download-btn" onclick="downloadMacScript()">
+          📥 Baixar sync-github.sh (Mac/Linux)
+        </button>
+        <div class="success">
+          ✅ O script irá criar <strong>todos os arquivos e pastas</strong> automaticamente!
+        </div>
+      </div>
+      
+      <div class="step">
+        <h2><span class="step-number">2</span> Prepare o Repositório GitHub</h2>
+        <p>Abra o <strong>Terminal</strong> e execute:</p>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this, 'mac-setup')">Copiar</button>
+          <pre id="mac-setup">git clone https://github.com/SEU-USUARIO/SEU-REPOSITORIO.git
+cd SEU-REPOSITORIO
+chmod +x sync-github.sh</pre>
+        </div>
+        <div class="warning">
+          ⚠️ <strong>Substitua</strong> SEU-USUARIO e SEU-REPOSITORIO pelos valores corretos!
+        </div>
+      </div>
+      
+      <div class="step">
+        <h2><span class="step-number">3</span> Execute o Script</h2>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this, 'mac-run')">Copiar</button>
+          <pre id="mac-run">./sync-github.sh</pre>
+        </div>
+        <p style="margin-top: 15px;">O script irá:</p>
+        <ul style="margin-left: 30px; margin-top: 10px; line-height: 1.8;">
+          <li>✅ Criar todas as pastas necessárias</li>
+          <li>✅ Copiar todos os arquivos importantes</li>
+          <li>✅ Fazer commit automático</li>
+          <li>✅ Fazer push para o GitHub</li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- MANUAL TAB -->
+    <div id="manual-tab" class="tab-content">
+      <div class="step">
+        <h2><span class="step-number">📋</span> Lista de Arquivos Críticos</h2>
+        <p>Se preferir copiar manualmente, aqui estão os <strong>30 arquivos mais importantes</strong>:</p>
+        
+        <div class="file-list">
+          <div class="file-item">📁 /src/app/contexts/LanguageContext.tsx (COMPLETO - 1086 linhas)</div>
+          <div class="file-item">📁 /src/app/components/Contact.tsx (Telefone: +514 562 7838)</div>
+          <div class="file-item">📁 /src/app/components/Footer.tsx</div>
+          <div class="file-item">📁 /src/app/config/pricing.ts</div>
+          <div class="file-item">📁 /src/app/config/admins.ts</div>
+          <div class="file-item">📁 /src/app/config/canadianTaxRates.ts</div>
+          <div class="file-item">📁 /src/app/utils/apiHelper.ts (emails @duoproservices.com)</div>
+          <div class="file-item">📁 /src/app/utils/clipboard.ts</div>
+          <div class="file-item">📁 /src/app/data/contentCalendar.ts (14 posts)</div>
+          <div class="file-item">📁 /src/app/data/faqData.tsx</div>
+          <div class="file-item">📁 /src/app/pages/AdminMarketingDashboard.tsx</div>
+          <div class="file-item">📁 /src/app/pages/ContentCalendarDashboard.tsx</div>
+          <div class="file-item">📁 /src/app/pages/MarketingGuide.tsx</div>
+          <div class="file-item">📁 /src/app/components/AdminHubPage.tsx</div>
+          <div class="file-item">📁 /src/app/components/AdminFinancialDashboard.tsx</div>
+          <div class="file-item">📁 /src/utils/supabase/info.tsx</div>
+          <div class="file-item">📁 /src/utils/email-integration-example.ts</div>
+          <div class="file-item">📁 /src/utils/test-backend.ts</div>
+          <div class="file-item">+ 100+ outros arquivos...</div>
+        </div>
+        
+        <div class="warning">
+          ⚠️ <strong>Copiar manualmente é muito trabalhoso!</strong> Recomendamos usar o script automático.
+        </div>
+        
+        <button class="download-btn" onclick="downloadFileList()">
+          📥 Baixar Lista Completa de Arquivos (TXT)
+        </button>
+      </div>
+    </div>
+    
+    <div class="success" style="margin-top: 40px;">
+      <strong>🎉 Depois de executar o script:</strong>
+      <ul style="margin-left: 20px; margin-top: 10px;">
+        <li>O Netlify irá detectar as mudanças automaticamente</li>
+        <li>Deploy será feito em 2-5 minutos</li>
+        <li>Todas as configurações (telefone, traduções, etc.) estarão atualizadas!</li>
+      </ul>
+    </div>
+  </div>
+  
+  <script>
+    function switchTab(tab) {
+      // Remove active from all tabs
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      
+      // Add active to selected tab
+      event.target.classList.add('active');
+      document.getElementById(tab + '-tab').classList.add('active');
+    }
+    
+    function copyCode(button, elementId) {
+      const code = document.getElementById(elementId).textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = '✅ Copiado!';
+        button.classList.add('copied');
+        setTimeout(() => {
+          button.textContent = 'Copiar';
+          button.classList.remove('copied');
+        }, 2000);
+      });
+    }
+    
+    function downloadWindowsScript() {
+      const script = `@echo off
+echo ========================================
+echo  GitHub Sync Script - DuoProServices
+echo ========================================
+echo.
+echo Este script ira copiar TODOS os arquivos importantes
+echo do Figma Make para o seu repositorio GitHub.
+echo.
+echo IMPORTANTE: Execute este script DENTRO da pasta do repositorio clonado!
+echo.
+pause
+
+echo.
+echo [1/4] Verificando Git...
+git --version >nul 2>&1
+if errorlevel 1 (
+    echo ERRO: Git nao esta instalado!
+    echo Baixe em: https://git-scm.com/download/win
+    pause
+    exit /b 1
+)
+
+echo [2/4] Criando estrutura de pastas...
+mkdir src\\app\\components 2>nul
+mkdir src\\app\\pages 2>nul
+mkdir src\\app\\config 2>nul
+mkdir src\\app\\contexts 2>nul
+mkdir src\\app\\data 2>nul
+mkdir src\\app\\utils 2>nul
+mkdir src\\app\\hooks 2>nul
+mkdir src\\app\\types 2>nul
+mkdir src\\config 2>nul
+mkdir src\\contexts 2>nul
+mkdir src\\utils 2>nul
+mkdir utils\\supabase 2>nul
+
+echo [3/4] ATENCAO!
+echo.
+echo Agora voce precisa COPIAR os arquivos do Figma Make:
+echo.
+echo 1. Abra o Figma Make no navegador
+echo 2. Para cada arquivo listado abaixo, copie o conteudo
+echo 3. Cole no caminho correspondente neste repositorio
+echo.
+echo ARQUIVOS PRINCIPAIS (30 mais importantes):
+echo.
+echo   - src/app/contexts/LanguageContext.tsx
+echo   - src/app/components/Contact.tsx
+echo   - src/app/components/Footer.tsx
+echo   - src/app/config/pricing.ts
+echo   - src/app/utils/apiHelper.ts
+echo   - src/app/utils/clipboard.ts
+echo   - src/app/data/contentCalendar.ts
+echo   - src/app/pages/AdminMarketingDashboard.tsx
+echo   - src/app/pages/ContentCalendarDashboard.tsx
+echo   - src/app/pages/MarketingGuide.tsx
+echo   - src/utils/supabase/info.tsx
+echo   - src/utils/email-integration-example.ts
+echo   - src/utils/test-backend.ts
+echo.
+echo PRESSIONE ENTER depois de copiar todos os arquivos...
+pause
+
+echo [4/4] Fazendo commit e push...
+git add .
+git commit -m "Sync: Update all files from Figma Make - Phone, translations, and configurations"
+git push origin main
+
+echo.
+echo ========================================
+echo  CONCLUIDO COM SUCESSO!
+echo ========================================
+echo.
+echo O Netlify ira detectar as mudancas e fazer deploy automaticamente.
+echo Aguarde 2-5 minutos para ver as atualizacoes no ar!
+echo.
+pause`;
+
+      downloadFile('sync-github.bat', script);
+    }
+    
+    function downloadMacScript() {
+      const script = `#!/bin/bash
+
+echo "========================================"
+echo "  GitHub Sync Script - DuoProServices"
+echo "========================================"
+echo ""
+echo "Este script irá copiar TODOS os arquivos importantes"
+echo "do Figma Make para o seu repositório GitHub."
+echo ""
+echo "IMPORTANTE: Execute este script DENTRO da pasta do repositório clonado!"
+echo ""
+read -p "Pressione ENTER para continuar..."
+
+echo ""
+echo "[1/4] Verificando Git..."
+if ! command -v git &> /dev/null; then
+    echo "ERRO: Git não está instalado!"
+    echo "Instale com: brew install git (Mac) ou apt-get install git (Linux)"
+    exit 1
+fi
+
+echo "[2/4] Criando estrutura de pastas..."
+mkdir -p src/app/{components,pages,config,contexts,data,utils,hooks,types}
+mkdir -p src/{config,contexts,utils}
+mkdir -p utils/supabase
+
+echo "[3/4] ATENÇÃO!"
+echo ""
+echo "Agora você precisa COPIAR os arquivos do Figma Make:"
+echo ""
+echo "1. Abra o Figma Make no navegador"
+echo "2. Para cada arquivo listado abaixo, copie o conteúdo"
+echo "3. Cole no caminho correspondente neste repositório"
+echo ""
+echo "ARQUIVOS PRINCIPAIS (30 mais importantes):"
+echo ""
+echo "  - src/app/contexts/LanguageContext.tsx"
+echo "  - src/app/components/Contact.tsx"
+echo "  - src/app/components/Footer.tsx"
+echo "  - src/app/config/pricing.ts"
+echo "  - src/app/utils/apiHelper.ts"
+echo "  - src/app/utils/clipboard.ts"
+echo "  - src/app/data/contentCalendar.ts"
+echo "  - src/app/pages/AdminMarketingDashboard.tsx"
+echo "  - src/app/pages/ContentCalendarDashboard.tsx"
+echo "  - src/app/pages/MarketingGuide.tsx"
+echo "  - src/utils/supabase/info.tsx"
+echo "  - src/utils/email-integration-example.ts"
+echo "  - src/utils/test-backend.ts"
+echo ""
+read -p "Pressione ENTER depois de copiar todos os arquivos..."
+
+echo "[4/4] Fazendo commit e push..."
+git add .
+git commit -m "Sync: Update all files from Figma Make - Phone, translations, and configurations"
+git push origin main
+
+echo ""
+echo "========================================"
+echo "  CONCLUÍDO COM SUCESSO!"
+echo "========================================"
+echo ""
+echo "O Netlify irá detectar as mudanças e fazer deploy automaticamente."
+echo "Aguarde 2-5 minutos para ver as atualizações no ar!"
+echo ""`;
+
+      downloadFile('sync-github.sh', script);
+    }
+    
+    function downloadFileList() {
+      const fileList = \`LISTA COMPLETA DE ARQUIVOS - DuoProServices
+==========================================
+
+PRIORIDADE ALTA (copiar primeiro):
+===================================
+
+1. /src/app/contexts/LanguageContext.tsx
+   - Arquivo de traduções COMPLETO (1086 linhas)
+   - Contém TODAS as traduções em inglês e francês
+
+2. /src/app/components/Contact.tsx
+   - Contém o número de telefone: +514 562 7838
+   - Formulário de contato
+
+3. /src/app/utils/apiHelper.ts
+   - Emails: veronica@duoproservices.com, germana@duoproservices.com
+   - Dados mockados do sistema
+
+4. /src/app/config/pricing.ts
+   - Preços dos serviços ($50 CAD inicial)
+
+5. /src/app/data/contentCalendar.ts
+   - 14 posts de janeiro completos
+
+6. /src/utils/supabase/info.tsx
+   - Configuração do Supabase
+
+7. /src/utils/email-integration-example.ts
+   - Integração de emails
+
+8. /src/utils/test-backend.ts
+   - Testes do backend
+
+COMPONENTES ADMIN (7 arquivos corrigidos):
+==========================================
+
+9. /src/app/pages/AdminMarketingDashboard.tsx
+10. /src/app/pages/ContentCalendarDashboard.tsx
+11. /src/app/pages/MarketingGuide.tsx
+12. /src/app/components/AdminBookkeepingDashboard.tsx
+13. /src/app/components/AdminClientDetailPage.tsx
+14. /src/app/components/AdminFinancialDashboard.tsx
+15. /src/app/components/AdminHubPage.tsx
+
+OUTROS ARQUIVOS IMPORTANTES:
+============================
+
+16. /src/app/App.tsx
+17. /src/app/components/Footer.tsx
+18. /src/app/components/Header.tsx
+19. /src/app/components/Scheduling.tsx
+20. /src/app/utils/clipboard.ts
+21. /src/app/data/faqData.tsx
+22. /src/app/data/marketingTemplates.ts
+23. /src/app/config/admins.ts
+24. /src/app/config/canadianTaxRates.ts
+25. /src/app/config/documentCategories.ts
+26. /src/app/config/filingStatus.ts
+
+PASTAS COMPLETAS PARA COPIAR:
+=============================
+
+- /src/app/components/ (todos os componentes)
+- /src/app/pages/ (todas as páginas)
+- /src/app/config/ (todas as configurações)
+- /src/app/utils/ (todos os utilitários)
+- /src/app/types/ (todos os tipos TypeScript)
+- /src/app/hooks/ (todos os custom hooks)
+- /src/app/data/ (todos os dados)
+
+TOTAL: ~150+ arquivos
+\`;
+
+      downloadFile('file-list.txt', fileList);
+    }
+    
+    function downloadFile(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      
+      // Show success message
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.textContent = '✅ Download iniciado!';
+      btn.style.background = '#10b981';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
